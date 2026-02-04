@@ -1,0 +1,17 @@
+Review this Jira ticket and provide a detailed analysis:
+
+Key: {{key}}
+Summary: {{summary}}
+Project: {{project}}
+Type: {{issueType}}
+Priority: {{priority}}
+
+Description:
+{{description}}
+
+Please provide your review in the following format:
+1. **Summary**: A brief overview of the ticket.
+2. **Clarity**: Is the description clear and easy to understand?
+3. **Requirements**: Are there any missing or ambiguous requirements?
+4. **Technical Considerations**: Any potential technical challenges or edge cases?
+5. **Suggested Improvements**: How can this ticket be improved?
