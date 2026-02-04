@@ -1,6 +1,7 @@
 import type { Config, LLMProvider } from '@/types';
 import { OpenAIProvider } from '@/providers/openai';
 import { AnthropicProvider } from '@/providers/anthropic';
+import { GeminiProvider } from '@/providers/gemini';
 import { LocalProvider } from '@/providers/local';
 
 export function getProvider(name: string, config: Config): LLMProvider {
@@ -9,12 +10,16 @@ export function getProvider(name: string, config: Config): LLMProvider {
       return new OpenAIProvider(config.providers.openai);
     case 'anthropic':
       return new AnthropicProvider(config.providers.anthropic);
+    case 'gemini':
+      return new GeminiProvider(config.providers.gemini);
     case 'local':
       return new LocalProvider(config.providers.local);
     case 'custom':
       return createCustomProvider(config.providers.custom);
     default:
-      throw new Error(`Unknown provider: ${name}. Available: openai, anthropic, local, custom`);
+      throw new Error(
+        `Unknown provider: ${name}. Available: openai, anthropic, gemini, local, custom`
+      );
   }
 }
 
@@ -58,4 +63,5 @@ function createCustomProvider(providerConfig: Config['providers']['custom']): LL
 
 export { OpenAIProvider } from '@/providers/openai';
 export { AnthropicProvider } from '@/providers/anthropic';
+export { GeminiProvider } from '@/providers/gemini';
 export { LocalProvider } from '@/providers/local';

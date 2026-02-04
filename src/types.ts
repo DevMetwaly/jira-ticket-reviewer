@@ -35,6 +35,7 @@ export interface Config {
   providers: {
     openai?: ProviderConfig;
     anthropic?: ProviderConfig;
+    gemini?: ProviderConfig;
     local?: ProviderConfig;
     custom?: ProviderConfig;
   };

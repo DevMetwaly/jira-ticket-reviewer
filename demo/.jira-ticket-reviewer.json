@@ -18,6 +18,10 @@
       "baseUrl": "http://localhost:11434/api",
       "model": "llama2"
     },
+    "gemini": {
+      "apiKey": "sk-...",
+      "model": "gemini-2.5-flash"
+    },
     "custom": {
       "baseUrl": "http://your-custom-llm-endpoint/v1",
       "apiKey": "optional-api-key",

@@ -7,6 +7,7 @@ CLI tool to review Jira issues using AI models.
 ```bash
 npm install -g jira-ticket-reviewer
 
+
 ```
 
 Or run locally:
@@ -14,6 +15,7 @@ Or run locally:
 ```bash
 npm install
 npm run build
+
 
 ```
 
@@ -27,6 +29,7 @@ To see the tool in action without a Jira account, you can use the provided demo 
 git clone https://github.com/your-username/jira-ticket-reviewer.git
 cd jira-ticket-reviewer
 
+
 ```
 
 2. Install dependencies and build:
@@ -35,18 +38,21 @@ cd jira-ticket-reviewer
 npm install
 npm run build
 
+
 ```
 
 3. Run the demo using the example ticket:
 
 ```bash
 node dist/index.js --input demo/ticket.json
+
 ```
 
 You can also try using a custom prompt:
 
 ```bash
 node dist/index.js --input demo/ticket.json --prompt demo/custom-prompt.txt
+
 ```
 
 > **Note:** You still need to configure an LLM provider (e.g., OpenAI API key) as described in the [Configuration](#configuration) section. You can use `demo/.jira-ticket-reviewer.json` as a starting point for your configuration.
@@ -59,12 +65,14 @@ node dist/index.js --input demo/ticket.json --prompt demo/custom-prompt.txt
 jira-ticket-reviewer PROJ-123
 
 
+
 ```
 
 ### Manual input (JSON file)
 
 ```bash
 jira-ticket-reviewer --input ticket.json
+
 
 
 ```
@@ -77,7 +85,7 @@ jira-ticket-reviewer --input ticket.json
 | `--jira-token <token>`  | Jira API token                                         |
 | `--jira-email <email>`  | Jira account email                                     |
 | `-i, --input <file>`    | Manual input JSON file instead of fetching from Jira   |
-| `-p, --provider <name>` | LLM provider: `openai`, `anthropic`, `local`, `custom` |
+| `-p, --provider <name>` | LLM provider: `openai`, `anthropic`, `gemini`, `local`, `custom` |
 | `--prompt <file>`       | Custom prompt template file                            |
 | `-o, --output <file>`   | Output file path (default: `<ISSUE_KEY>.md`)           |
 | `--no-stdout`           | Disable stdout output                                  |
@@ -106,12 +114,17 @@ Create `.jira-ticket-reviewer.json` in your project root or home directory:
       "apiKey": "sk-ant-...",
       "model": "claude-sonnet-4-20250514"
     },
+    "gemini": {
+      "apiKey": "your-gemini-api-key",
+      "model": "gemini-2.0-flash"
+    },
     "local": {
       "baseUrl": "http://localhost:11434/api",
       "model": "llama2"
     }
   }
 }
+
 
 
 ```
@@ -130,6 +143,8 @@ Environment variables override config file values:
 | `OPENAI_MODEL`       | OpenAI model (default: `gpt-4o`)                      |
 | `ANTHROPIC_API_KEY`  | Anthropic API key                                     |
 | `ANTHROPIC_MODEL`    | Anthropic model (default: `claude-sonnet-4-20250514`) |
+| `GEMINI_API_KEY`     | Google Gemini API key                                 |
+| `GEMINI_MODEL`       | Gemini model (default: `gemini-2.0-flash`)            |
 | `LOCAL_LLM_URL`      | Local LLM endpoint URL                                |
 | `LOCAL_LLM_MODEL`    | Local LLM model name                                  |
 | `CUSTOM_LLM_URL`     | Custom LLM endpoint URL                               |
@@ -152,6 +167,7 @@ Please provide:
 1. Clarity issues
 2. Missing requirements
 3. Suggested improvements
+
 
 
 ```
@@ -194,6 +210,7 @@ When using `--input`, provide a JSON file with issue details:
 }
 
 
+
 ```
 
 ## Providers
@@ -205,6 +222,10 @@ Uses the OpenAI Chat Completions API. Set `OPENAI_API_KEY` or configure in confi
 ### Anthropic
 
 Uses the Anthropic Messages API. Set `ANTHROPIC_API_KEY` or configure in config file.
+
+### Gemini
+
+Uses the Google Gemini API. Set `GEMINI_API_KEY` or configure in config file. Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
 ### Local
 
