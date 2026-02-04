@@ -1,14 +1,21 @@
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
-import type { Config, CLIOptions } from '@/types';
+import { join, dirname } from 'path';
+import type { Config, CLIOptions, ProviderConfig } from '@/types';
 
 const CONFIG_FILE_NAME = '.jira-ticket-reviewer.json';
 
-function findConfigFile(): string | null {
-  // Check current directory
-  const cwdConfig = join(process.cwd(), CONFIG_FILE_NAME);
+function findConfigFile(cwd?: string): string | null {
+  // Check specified directory or current directory
+  const searchDir = cwd || process.cwd();
+  const cwdConfig = join(searchDir, CONFIG_FILE_NAME);
   if (existsSync(cwdConfig)) {
     return cwdConfig;
+  }
+
+  // If we searched a specific directory and didn't find it, don't fallback to home
+  // unless it's the current directory search
+  if (cwd) {
+    return null;
   }
 
   // Check home directory
@@ -21,8 +28,8 @@ function findConfigFile(): string | null {
   return null;
 }
 
-function loadConfigFile(): Partial<Config> {
-  const configPath = findConfigFile();
+function loadConfigFile(cwd?: string): Partial<Config> {
+  const configPath = findConfigFile(cwd);
   if (!configPath) {
     return {};
   }
@@ -37,6 +44,45 @@ function loadConfigFile(): Partial<Config> {
 }
 
 function getEnvConfig(): Partial<Config> {
+  const providers: Config['providers'] = {};
+
+  if (process.env.OPENAI_API_KEY || process.env.OPENAI_MODEL) {
+    providers.openai = {
+      name: 'openai',
+      apiKey: process.env.OPENAI_API_KEY,
+      model: process.env.OPENAI_MODEL,
+    };
+  }
+
+  if (process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_MODEL) {
+    providers.anthropic = {
+      name: 'anthropic',
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      model: process.env.ANTHROPIC_MODEL,
+    };
+  }
+
+  if (process.env.LOCAL_LLM_URL || process.env.LOCAL_LLM_MODEL) {
+    providers.local = {
+      name: 'local',
+      baseUrl: process.env.LOCAL_LLM_URL,
+      model: process.env.LOCAL_LLM_MODEL,
+    };
+  }
+
+  if (
+    process.env.CUSTOM_LLM_API_KEY ||
+    process.env.CUSTOM_LLM_URL ||
+    process.env.CUSTOM_LLM_MODEL
+  ) {
+    providers.custom = {
+      name: 'custom',
+      apiKey: process.env.CUSTOM_LLM_API_KEY,
+      baseUrl: process.env.CUSTOM_LLM_URL,
+      model: process.env.CUSTOM_LLM_MODEL,
+    };
+  }
+
   return {
     jira: {
       baseUrl: process.env.JIRA_BASE_URL,
@@ -44,29 +90,7 @@ function getEnvConfig(): Partial<Config> {
       email: process.env.JIRA_EMAIL,
     },
     provider: process.env.LLM_PROVIDER,
-    providers: {
-      openai: {
-        name: 'openai',
-        apiKey: process.env.OPENAI_API_KEY,
-        model: process.env.OPENAI_MODEL,
-      },
-      anthropic: {
-        name: 'anthropic',
-        apiKey: process.env.ANTHROPIC_API_KEY,
-        model: process.env.ANTHROPIC_MODEL,
-      },
-      local: {
-        name: 'local',
-        baseUrl: process.env.LOCAL_LLM_URL,
-        model: process.env.LOCAL_LLM_MODEL,
-      },
-      custom: {
-        name: 'custom',
-        apiKey: process.env.CUSTOM_LLM_API_KEY,
-        baseUrl: process.env.CUSTOM_LLM_URL,
-        model: process.env.CUSTOM_LLM_MODEL,
-      },
-    },
+    providers,
     promptFile: process.env.PROMPT_FILE,
     outputDir: process.env.OUTPUT_DIR,
   };
@@ -76,12 +100,32 @@ function mergeConfigs(...configs: Partial<Config>[]): Config {
   const defaultConfig: Config = {
     jira: {},
     provider: 'openai',
-    providers: {},
+    providers: {
+      openai: { name: 'openai' },
+      anthropic: { name: 'anthropic' },
+      local: { name: 'local' },
+      custom: { name: 'custom' },
+    },
   };
 
   let result = { ...defaultConfig };
 
   for (const config of configs) {
+    if (!config) continue;
+
+    const mergedProviders = { ...result.providers };
+    if (config.providers) {
+      for (const [key, value] of Object.entries(config.providers)) {
+        if (value) {
+          const providerKey = key as keyof Config['providers'];
+          mergedProviders[providerKey] = {
+            ...mergedProviders[providerKey],
+            ...value,
+          } as ProviderConfig;
+        }
+      }
+    }
+
     result = {
       ...result,
       ...config,
@@ -89,10 +133,7 @@ function mergeConfigs(...configs: Partial<Config>[]): Config {
         ...result.jira,
         ...config.jira,
       },
-      providers: {
-        ...result.providers,
-        ...config.providers,
-      },
+      providers: mergedProviders,
     };
   }
 
@@ -107,7 +148,16 @@ function mergeConfigs(...configs: Partial<Config>[]): Config {
 }
 
 export function loadConfig(cliOptions: CLIOptions): Config {
-  const fileConfig = loadConfigFile();
+  // 1. Load from current directory or home
+  const globalConfig = loadConfigFile();
+
+  // 2. Load from input file directory if provided
+  let inputDirConfig: Partial<Config> = {};
+  if (cliOptions.input) {
+    const inputDir = dirname(cliOptions.input);
+    inputDirConfig = loadConfigFile(inputDir);
+  }
+
   const envConfig = getEnvConfig();
 
   // CLI options take highest priority
@@ -121,6 +171,6 @@ export function loadConfig(cliOptions: CLIOptions): Config {
     promptFile: cliOptions.prompt,
   };
 
-  // Merge: file -> env -> cli (cli wins)
-  return mergeConfigs(fileConfig, envConfig, cliConfig);
+  // Merge: global -> inputDir -> env -> cli (cli wins)
+  return mergeConfigs(globalConfig, inputDirConfig, envConfig, cliConfig);
 }
