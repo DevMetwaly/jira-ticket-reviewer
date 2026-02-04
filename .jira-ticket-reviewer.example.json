@@ -1,0 +1,29 @@
+{
+  "jira": {
+    "baseUrl": "https://your-company.atlassian.net",
+    "email": "your-email@example.com",
+    "token": "your-jira-api-token"
+  },
+  "provider": "openai",
+  "providers": {
+    "openai": {
+      "apiKey": "sk-...",
+      "model": "gpt-4o"
+    },
+    "anthropic": {
+      "apiKey": "sk-ant-...",
+      "model": "claude-sonnet-4-20250514"
+    },
+    "local": {
+      "baseUrl": "http://localhost:11434/api",
+      "model": "llama2"
+    },
+    "custom": {
+      "baseUrl": "http://your-custom-llm-endpoint/v1",
+      "apiKey": "optional-api-key",
+      "model": "your-model"
+    }
+  },
+  "promptFile": "./my-custom-prompt.txt",
+  "outputDir": "./reviews"
+}

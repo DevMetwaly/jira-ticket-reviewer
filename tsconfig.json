@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true, // Generates .d.ts files for your code
+    "declarationMap": true, // Optional: creates sourcemaps for your types
+    "emitDeclarationOnly": false // Ensure this is false (or omitted) to still get .js files
+  },
+  "include": ["src/**/*.ts"]
+}

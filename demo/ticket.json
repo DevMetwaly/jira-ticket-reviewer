@@ -1,0 +1,13 @@
+{
+  "key": "DEMO-101",
+  "summary": "Add user authentication to the API",
+  "status": "To Do",
+  "priority": "High",
+  "issueType": "Story",
+  "assignee": "John Doe",
+  "reporter": "Jane Smith",
+  "description": "As a developer, I want to add user authentication to our API so that only authorized users can access sensitive data.\n\nRequirements:\n- Use JWT for authentication\n- Implement login and signup endpoints\n- Add middleware to protect routes\n- Store passwords securely using hashing",
+  "labels": ["backend", "security", "auth"],
+  "components": ["API"],
+  "project": "Demo Project"
+}
