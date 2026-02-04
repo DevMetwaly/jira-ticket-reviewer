@@ -1,5 +1,5 @@
 {
-  "name": "jira-ticket-reviewer",
+  "name": "@dev-metwaly/jira-ticket-reviewer",
   "version": "0.1.0",
   "description": "CLI to review Jira issues using AI models",
   "type": "module",
