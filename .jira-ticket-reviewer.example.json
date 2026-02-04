@@ -14,6 +14,10 @@
       "apiKey": "sk-ant-...",
       "model": "claude-sonnet-4-20250514"
     },
+    "gemini": {
+      "apiKey": "sk-...",
+      "model": "gemini-2.5-flash"
+    },
     "local": {
       "baseUrl": "http://localhost:11434/api",
       "model": "llama2"

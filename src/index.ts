@@ -21,7 +21,7 @@ program
   .option('--jira-token <token>', 'Jira API token')
   .option('--jira-email <email>', 'Jira account email')
   .option('-i, --input <file>', 'Manual input JSON file instead of fetching from Jira')
-  .option('-p, --provider <name>', 'LLM provider to use (openai, anthropic, local, custom)')
+  .option('-p, --provider <name>', 'LLM provider to use (openai, anthropic, gemini, local, custom)')
   .option('--prompt <file>', 'Custom prompt template file')
   .option('-o, --output <file>', 'Output file path (default: <ISSUE_KEY>.md)')
   .option('--no-stdout', 'Disable stdout output')

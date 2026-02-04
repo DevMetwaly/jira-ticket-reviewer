@@ -62,6 +62,14 @@ function getEnvConfig(): Partial<Config> {
     };
   }
 
+  if (process.env.GEMINI_API_KEY || process.env.GEMINI_MODEL) {
+    providers.gemini = {
+      name: 'gemini',
+      apiKey: process.env.GEMINI_API_KEY,
+      model: process.env.GEMINI_MODEL,
+    };
+  }
+
   if (process.env.LOCAL_LLM_URL || process.env.LOCAL_LLM_MODEL) {
     providers.local = {
       name: 'local',
@@ -103,6 +111,7 @@ function mergeConfigs(...configs: Partial<Config>[]): Config {
     providers: {
       openai: { name: 'openai' },
       anthropic: { name: 'anthropic' },
+      gemini: { name: 'gemini' },
       local: { name: 'local' },
       custom: { name: 'custom' },
     },
